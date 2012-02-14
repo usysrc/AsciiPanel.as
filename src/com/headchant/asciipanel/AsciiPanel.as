@@ -7,7 +7,7 @@ package com.headchant.asciipanel {
 
 	
 	/**
-	 * @author hars
+	 * @author Tilmann Hars
 	 * heavly inspired by the java AsciiPanel by trystan: trystans.blogspot.com
 	 */
 	

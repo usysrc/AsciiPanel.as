@@ -108,7 +108,7 @@ package com.headchant.asciipanel {
 			oldchars = copyChars(chars);
 		}
 
-		public function copyChars(itemToCopy):Array{
+		public function copyChars(itemToCopy:Array):Array{
 		    var newArray:Array = new Array();
 		    for(var i:int = 0; i < (itemToCopy as Array).length; i++)
 		        newArray[i] = (itemToCopy[i] as Array).slice();

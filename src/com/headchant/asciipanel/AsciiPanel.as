@@ -96,15 +96,23 @@ package com.headchant.asciipanel {
 		public function paint():void{
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
-					
+					if (chars[i][j] == oldchars[i][j])
+						continue;
+
 					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
 					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), new Point(i*charWidth, j*charHeight));
 				}
 			}
-			//screenBitmap = new Bitmap(screen);
-			
+			oldchars = copyChars(chars);
+		}
+
+		public function copyChars(itemToCopy):Array{
+		    var newArray:Array = new Array();
+		    for(var i:int = 0; i < (itemToCopy as Array).length; i++)
+		        newArray[i] = (itemToCopy[i] as Array).slice();
+		    return newArray;
 		}
 		
 		public static function rgbaColor(r:int, g:int, b:int, a:int = 255):uint{

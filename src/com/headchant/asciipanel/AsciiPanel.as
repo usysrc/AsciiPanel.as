@@ -33,11 +33,17 @@ package com.headchant.asciipanel {
 		public static var WHITE : uint = rgbaColor(255,255,255);
 		public static var BLACK : uint = rgbaColor(0,0,0);
 		public static var RED : uint = rgbaColor(255,0,0);
-		public static var BLUE : uint = rgbaColor(0,0,255);
+		public static var BLUE : uint = rgbaColor(0,0,255);		
 		public static var GREEN : uint = rgbaColor(0,255,0);
 		public static var YELLOW : uint = rgbaColor(128, 128, 0);
 		public static var GREY : uint = rgbaColor(128, 128, 128);
 		public static var DARKWHITE : uint = rgbaColor(192, 192, 192);
+		
+		// more exotic colors
+		public static var DODGERBLUE : uint = rgbaColor(30, 144, 255);
+		private var oldchars : Array;
+		private var oldbackgroundColor : Array;
+		private var oldforegroundColor : Array;
 		
 		public function AsciiPanel(){
 			fontBitmap = new fontImage() as Bitmap;
@@ -64,18 +70,27 @@ package com.headchant.asciipanel {
 
 			screen = new BitmapData(charWidth*widthInCharacters+10, charHeight*heightInCharacters+10,false,0x000000);
 			chars = new Array();
+			oldchars = new Array();
 			foregroundColor = new Array();
 			backgroundColor = new Array();
+			oldforegroundColor = new Array();
+			oldbackgroundColor = new Array();
 			
 			for ( i = 0; i < widthInCharacters; i++) {
 				chars[i] = [];
+				oldchars[i] = [];
 				foregroundColor[i] = [];
 				backgroundColor[i] = [];
+				oldforegroundColor[i] = [];
+				oldbackgroundColor[i] = [];
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					chars[i][j] = 0;
+					oldchars[i][j] = -1;
 					foregroundColor[i][j] = defaultForegroundColor;
 					backgroundColor[i][j] = defaultBackgroundColor;
-
+					oldforegroundColor[i][j] = defaultForegroundColor;
+					oldbackgroundColor[i][j] = defaultBackgroundColor;
+					
 					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
@@ -96,19 +111,25 @@ package com.headchant.asciipanel {
 		public function paint():void{
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
-					if (chars[i][j] == oldchars[i][j])
+					if (chars[i][j] == oldchars[i][j] 
+						&& foregroundColor[i][j] == oldforegroundColor[i][j]
+						&& backgroundColor[i][j] == oldbackgroundColor[i][j])
 						continue;
-
+					if (chars[i][j] == null)
+						continue;
+						
 					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
 					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
 					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), new Point(i*charWidth, j*charHeight));
 				}
 			}
-			oldchars = copyChars(chars);
+			oldchars = copy(chars);
+			oldbackgroundColor = copy(backgroundColor);
+			oldforegroundColor = copy(foregroundColor);
 		}
-
-		public function copyChars(itemToCopy:Array):Array{
+		
+		private function copy(itemToCopy:Array):Array{
 		    var newArray:Array = new Array();
 		    for(var i:int = 0; i < (itemToCopy as Array).length; i++)
 		        newArray[i] = (itemToCopy[i] as Array).slice();
@@ -122,7 +143,8 @@ package com.headchant.asciipanel {
 		public function write(char:String, x:int, y:int):void{
 			if (char == null)
 				throw Error("char must not be null");
-								
+			foregroundColor[x][y] = WHITE;
+			backgroundColor[x][y] = BLACK;	
 			chars[x][y] = char.charCodeAt(0);
 		}
 		

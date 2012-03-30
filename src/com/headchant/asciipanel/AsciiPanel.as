@@ -108,7 +108,6 @@ package com.headchant.asciipanel {
 			addChild(screenBitmap);
 			scaleX = 1;
 			scaleY = 1;
-			scaleZ = 1;
 		}
 		
 		public function paint():void{

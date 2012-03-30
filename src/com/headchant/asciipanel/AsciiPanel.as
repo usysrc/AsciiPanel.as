@@ -45,7 +45,10 @@ package com.headchant.asciipanel {
 		private var oldbackgroundColor : Array;
 		private var oldforegroundColor : Array;
 		
-		public function AsciiPanel(){
+		public function getWidthInCharacters() : int { return widthInCharacters; }
+		public function getHeightInCharacters() : int { return heightInCharacters; }
+		
+		public function AsciiPanel(widthInCharacters:int = 80, heightInCharacters:int = 24){
 			fontBitmap = new fontImage() as Bitmap;
 			fontBitmapData = fontBitmap.bitmapData;
 			//addChild(fontBitmap);
@@ -62,8 +65,8 @@ package com.headchant.asciipanel {
 				
 			}
 
-			widthInCharacters = 80;
-			heightInCharacters = 24;
+			this.widthInCharacters = widthInCharacters;
+			this.heightInCharacters = heightInCharacters;
 
 			width = charWidth*widthInCharacters;
 			height = charHeight*heightInCharacters;
@@ -119,9 +122,12 @@ package com.headchant.asciipanel {
 						continue;
 						
 					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
-					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), new Point(i*charWidth, j*charHeight));
+					var dest:Point = new Point(i * charWidth, j * charHeight);
+					var rect:Rectangle = new Rectangle(dest.x, dest.y, charWidth, charHeight);
+					
+					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), dest);
+					screen.threshold(screen, rect, dest, ">", 0xFF000000, foregroundColor[i][j]);
+					screen.threshold(screen, rect, dest, "==", 0xFF000000, backgroundColor[i][j]);
 				}
 			}
 			oldchars = copy(chars);

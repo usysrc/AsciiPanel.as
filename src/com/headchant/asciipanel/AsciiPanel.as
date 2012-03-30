@@ -45,6 +45,9 @@ package com.headchant.asciipanel {
 		private var oldbackgroundColor : Array;
 		private var oldforegroundColor : Array;
 		
+		public function getWidthInCharacters() : int { return widthInCharacters; }
+		public function getHeightInCharacters() : int { return heightInCharacters; }
+		
 		public function AsciiPanel(widthInCharacters:int = 80, heightInCharacters:int = 24){
 			fontBitmap = new fontImage() as Bitmap;
 			fontBitmapData = fontBitmap.bitmapData;

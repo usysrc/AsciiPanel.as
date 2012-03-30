@@ -119,9 +119,12 @@ package com.headchant.asciipanel {
 						continue;
 						
 					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
-					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), new Point(i*charWidth, j*charHeight));
+					var dest:Point = new Point(i * charWidth, j * charHeight);
+					var rect:Rectangle = new Rectangle(dest.x, dest.y, charWidth, charHeight);
+					
+					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), dest);
+					screen.threshold(screen, rect, dest, ">", 0xFF000000, foregroundColor[i][j]);
+					screen.threshold(screen, rect, dest, "==", 0xFF000000, backgroundColor[i][j]);
 				}
 			}
 			oldchars = copy(chars);

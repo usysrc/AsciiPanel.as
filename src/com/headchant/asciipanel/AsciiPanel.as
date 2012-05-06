@@ -145,7 +145,7 @@ package com.headchant.asciipanel {
 			return (a << 24) | (r << 16) | (g << 8) | b;
 		}
 		
-		public function write(string:String, x:int, y:int, fgcolor:uint = 0xFFFFFF, bgcolor:uint = 0xFF000000):void {
+		public function write(string:String, x:int, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void {
 			if (string == null)
 				throw Error("string must not be null");
 				
@@ -156,12 +156,12 @@ package com.headchant.asciipanel {
 			}
 		}
 		
-		public function writeCenter(string:String, y:int, fgcolor:uint = 0xFFFFFF, bgcolor:uint = 0xFF000000):void{
+		public function writeCenter(string:String, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
 			var x:int = (widthInCharacters - string.length) / 2;
 			write(string, x, y);
 		}
 		
-		public function clear(char:String = " ", fgcolor:uint = 0xFFFFFF, bgcolor:uint = 0xFF000000):void{
+		public function clear(char:String = " ", fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					chars[i][j] = char.charCodeAt(0);

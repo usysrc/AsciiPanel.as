@@ -145,46 +145,28 @@ package com.headchant.asciipanel {
 			return (a << 24) | (r << 16) | (g << 8) | b;
 		}
 		
-		public function write(char:String, x:int, y:int):void{
-			if (char == null)
-				throw Error("char must not be null");
-			foregroundColor[x][y] = WHITE;
-			backgroundColor[x][y] = BLACK;	
-			chars[x][y] = char.charCodeAt(0);
-		}
-		
-		public function writeWithColor(char:String, x:int, y:int, fgcolor:uint = 0xFFFFFFFF, bgcolor:uint = 0xFF000000):void{
-			if (char == null)
-				throw Error("char must not be null");
-			
-			foregroundColor[x][y] = fgcolor;
-			backgroundColor[x][y] = bgcolor;	
-			chars[x][y] = char.charCodeAt(0);
-		}
-		
-		public function writeWithoutColor(char:String, x:int, y:int):void{
-			if (char == null)
-				throw Error("char must not be null");
-			
+		public function write(string:String, x:int, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void {
+			if (string == null)
+				throw Error("string must not be null");
 				
-			chars[x][y] = char.charCodeAt(0);
-		}
-		
-		public function writeString(string:String, x:int, y:int):void{
 			for (var i : int = 0; i < string.length; i++) {
-				write(string.charAt(i), x+i, y);
+				foregroundColor[x+i][y] = fgcolor;
+				backgroundColor[x+i][y] = bgcolor;	
+				chars[x+i][y] = string.charCodeAt(i);
 			}
 		}
 		
-		public function writeStringCenter(string:String, y:int):void{
+		public function writeCenter(string:String, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
 			var x:int = (widthInCharacters - string.length) / 2;
-			writeString(string, x, y);
+			write(string, x, y);
 		}
 		
-		public function clear(char:String = " "):void{
+		public function clear(char:String = " ", fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					chars[i][j] = char.charCodeAt(0);
+					foregroundColor[i][j] = fgcolor;
+					backgroundColor[i][j] = bgcolor;	
 				}
 			}
 		}

@@ -51,7 +51,6 @@ package com.headchant.asciipanel {
 		public function AsciiPanel(widthInCharacters:int = 80, heightInCharacters:int = 24){
 			fontBitmap = new fontImage() as Bitmap;
 			fontBitmapData = fontBitmap.bitmapData;
-			//addChild(fontBitmap);
 			
 			charWidth = 9;
 			charHeight = 16;
@@ -93,13 +92,6 @@ package com.headchant.asciipanel {
 					backgroundColor[i][j] = defaultBackgroundColor;
 					oldforegroundColor[i][j] = defaultForegroundColor;
 					oldbackgroundColor[i][j] = defaultBackgroundColor;
-					
-					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), ">", 0xFF000000, foregroundColor[i][j]);
-					bitmapdata.threshold(bitmapdata, bitmapdata.rect, new Point(0,0), "==", 0xFF000000, backgroundColor[i][j]);
-					
-					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), new Point(i*charWidth, j*charHeight));
-					
 				}
 			}
 			
@@ -108,9 +100,14 @@ package com.headchant.asciipanel {
 			addChild(screenBitmap);
 			scaleX = 1;
 			scaleY = 1;
+			paint();
 		}
 		
-		public function paint():void{
+		public function paint():void {
+			screen.lock();
+			
+			var sourceRect:Rectangle = new Rectangle(0, 0, charWidth, charHeight);
+					
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					if (chars[i][j] == oldchars[i][j] 
@@ -120,18 +117,42 @@ package com.headchant.asciipanel {
 					if (chars[i][j] == null)
 						continue;
 						
-					var bitmapdata : BitmapData = (glyphs[chars[i][j]] as BitmapData);
-					var dest:Point = new Point(i * charWidth, j * charHeight);
-					var rect:Rectangle = new Rectangle(dest.x, dest.y, charWidth, charHeight);
+					var bitmapdata:BitmapData = (glyphs[chars[i][j]] as BitmapData);
+					var destPoint:Point = new Point(i * charWidth, j * charHeight);
 					
-					screen.copyPixels(bitmapdata, new Rectangle(0,0,charWidth,charHeight), dest);
-					screen.threshold(screen, rect, dest, ">", 0xFF000000, foregroundColor[i][j]);
-					screen.threshold(screen, rect, dest, "==", 0xFF000000, backgroundColor[i][j]);
+					if(foregroundColor[i][j] != defaultForegroundColor || backgroundColor[i][j] != defaultBackgroundColor)
+					{
+						var tile:Vector.<uint> = bitmapdata.getVector(sourceRect); 
+						var tileLength:uint = tile.length;
+					
+						var destRect:Rectangle = new Rectangle(destPoint.x, destPoint.y, charWidth, charHeight);
+					
+						for(var pixel:uint = 0; pixel < tileLength; pixel++)
+						{
+							if(tile[pixel] == defaultBackgroundColor)
+							{
+								if(backgroundColor[i][j] != defaultBackgroundColor)
+								{
+									tile[pixel] = backgroundColor[i][j];
+								}
+							}
+							else if(foregroundColor[i][j] != defaultForegroundColor)
+							{
+								tile[pixel] = foregroundColor[i][j];
+							}
+						}
+						screen.setVector(destRect, tile);
+					}
+					else
+					{
+						screen.copyPixels(bitmapdata, sourceRect, destPoint);
+					}
 				}
 			}
 			oldchars = copy(chars);
 			oldbackgroundColor = copy(backgroundColor);
 			oldforegroundColor = copy(foregroundColor);
+			screen.unlock();
 		}
 		
 		private function copy(itemToCopy:Array):Array{

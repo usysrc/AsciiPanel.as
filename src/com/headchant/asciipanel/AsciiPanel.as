@@ -12,8 +12,11 @@ package com.headchant.asciipanel {
 	 */
 	
 	public class AsciiPanel extends Sprite {
-		[Embed(source="cp437.png", mimeType="image/png")]
-		private var fontImage:Class;
+		[Embed(source="cp437_9x16.png", mimeType = "image/png")]
+		public static const codePage437_9x16:Class;
+		
+		[Embed(source = "cp437_8x8.png", mimeType = "image/png")]
+		public static const codePage437_8x8:Class;
 		
 		private var glyphs : Array;
 		private var fontBitmapData : BitmapData;
@@ -48,29 +51,35 @@ package com.headchant.asciipanel {
 		public function getWidthInCharacters() : int { return widthInCharacters; }
 		public function getHeightInCharacters() : int { return heightInCharacters; }
 		
-		public function AsciiPanel(widthInCharacters:int = 80, heightInCharacters:int = 24){
-			fontBitmap = new fontImage() as Bitmap;
-			fontBitmapData = fontBitmap.bitmapData;
-			
-			charWidth = 9;
-			charHeight = 16;
-			
-			glyphs = new Array();
-			for (var i : int = 0; i < 256; i++) {
-				var sx:int = (i % 32) * charWidth + 8;
-				var sy:int = int(i / 32) * charHeight + 8;
-				glyphs[i] = new BitmapData(charWidth, charHeight);
-				(glyphs[i] as BitmapData).copyPixels(fontBitmapData, new Rectangle(sx,sy,charWidth, charHeight), new Point(0,0));
-				
-			}
-
+		public function AsciiPanel(widthInCharacters:int = 80, heightInCharacters:int = 24) {	
 			this.widthInCharacters = widthInCharacters;
 			this.heightInCharacters = heightInCharacters;
-
+			
+			useRasterFont(codePage437_9x16, 9, 16);
+		}
+		
+		public function useRasterFont(fontImage:Class, charWidth:int, charHeight:int):void {
+			this.fontBitmap = new fontImage() as Bitmap;
+			this.fontBitmapData = fontBitmap.bitmapData;
+			this.charWidth = charWidth;
+			this.charHeight = charHeight;
+			
+			var imageWidthInCharacters:int = fontBitmapData.width / charWidth;
+			
+			trace(imageWidthInCharacters);
+			
+			this.glyphs = new Array();
+			for (var i : int = 0; i < 256; i++) {
+				var sx:int = (i % imageWidthInCharacters) * charWidth;
+				var sy:int = int(i / imageWidthInCharacters) * charHeight;
+				glyphs[i] = new BitmapData(charWidth, charHeight);
+				(glyphs[i] as BitmapData).copyPixels(fontBitmapData, new Rectangle(sx,sy,charWidth, charHeight), new Point(0,0));
+			}
+			
 			width = charWidth*widthInCharacters;
-			height = charHeight*heightInCharacters;
-
-			screen = new BitmapData(charWidth*widthInCharacters+10, charHeight*heightInCharacters+10,false,0x000000);
+			height = charHeight * heightInCharacters;
+			
+			screen = new BitmapData(charWidth*widthInCharacters, charHeight*heightInCharacters,false,0x000000);
 			chars = new Array();
 			oldchars = new Array();
 			foregroundColor = new Array();
@@ -78,7 +87,7 @@ package com.headchant.asciipanel {
 			oldforegroundColor = new Array();
 			oldbackgroundColor = new Array();
 			
-			for ( i = 0; i < widthInCharacters; i++) {
+			for (i = 0; i < widthInCharacters; i++) {
 				chars[i] = [];
 				oldchars[i] = [];
 				foregroundColor[i] = [];
@@ -94,6 +103,9 @@ package com.headchant.asciipanel {
 					oldbackgroundColor[i][j] = defaultBackgroundColor;
 				}
 			}
+			
+			if (screenBitmap != null)
+				removeChild(screenBitmap);
 			
 			screenBitmap = new Bitmap(screen);
 			screenBitmap.smoothing = false;

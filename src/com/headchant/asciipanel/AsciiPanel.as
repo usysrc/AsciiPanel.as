@@ -57,6 +57,11 @@ package  {
 		 */
 		public var defaultBackgroundColor : uint = BLACK;
 		
+		/**
+		 * Where the last text ended and the next text will continue from if a position isn't specified.
+		 */
+		public var currentPosition : Point = new Point(0, 0);;
+		
 		public function getWidthInCharacters() : int { return widthInCharacters; }
 		public function getHeightInCharacters() : int { return heightInCharacters; }
 		
@@ -197,15 +202,21 @@ package  {
 		/**
 		 * Write some text at the specified location.
 		 * @param	string	The text to write.
-		 * @param	x		
-		 * @param	y
+		 * @param	x		Must be a uint or null. Will continue from currentPosition.x if left null.
+		 * @param	y		Must be a uint or null. Will continue from currentPosition.y if left null.
 		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use defaultForegroundColor if left null.
 		 * @param	bgcolor	The background color. Must be a uint or null. Will use defaultBackgroundColor if left null.
 		 */
-		public function write(string:String, x:int, y:int, fgcolor:* = null, bgcolor:* = null):void {
+		public function write(string:String, x:* = null, y:* = null, fgcolor:* = null, bgcolor:* = null):void {
 			if (string == null)
 				throw Error("string must not be null");
 			
+			if (x == null)
+				x = currentPosition.x;
+				
+			if (y == null)
+				y = currentPosition.y;
+				
 			if (fgcolor == null)
 				fgcolor = defaultForegroundColor;
 			
@@ -213,9 +224,12 @@ package  {
 				bgcolor = defaultBackgroundColor;
 				
 			for (var i : int = 0; i < string.length; i++) {
-				foregroundColor[x+i][y] = fgcolor;
-				backgroundColor[x+i][y] = bgcolor;	
-				chars[x+i][y] = string.charCodeAt(i);
+				x++;
+				foregroundColor[x][y] = fgcolor;
+				backgroundColor[x][y] = bgcolor;	
+				chars[x][y] = string.charCodeAt(i);
+				currentPosition.x = x;
+				currentPosition.y = y;
 			}
 		}
 		

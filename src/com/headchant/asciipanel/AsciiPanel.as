@@ -10,7 +10,6 @@ package  {
 	 * @author Tilmann Hars
 	 * heavly inspired by the java AsciiPanel by trystan: trystans.blogspot.com
 	 */
-	
 	public class AsciiPanel extends Sprite {
 		[Embed(source="cp437_9x16.png", mimeType = "image/png")]
 		public static const codePage437_9x16:Class;
@@ -48,7 +47,14 @@ package  {
 		private var oldbackgroundColor : Array;
 		private var oldforegroundColor : Array;
 		
+		/**
+		 * The default color to use when the foreground color is not specified.
+		 */
 		public var nullForegroundColor : uint = DARKWHITE;
+		
+		/**
+		 * The default color to use when the background color is not specified.
+		 */
 		public var nullBackgroundColor : uint = BLACK;
 		
 		public function getWidthInCharacters() : int { return widthInCharacters; }
@@ -61,6 +67,12 @@ package  {
 			useRasterFont(codePage437_9x16, 9, 16);
 		}
 		
+		/**
+		 * Use a custom bitmap font such as AsciiPanel.codePage437_8x8 or AsciiPanel.codePage437_9x16.
+		 * @param	fontImage	The top left character is 0, the bottom right is 255.
+		 * @param	charWidth	The width, in pixels, of each character.
+		 * @param	charHeight	The height, in pixels, of each character.
+		 */
 		public function useRasterFont(fontImage:Class, charWidth:int, charHeight:int):void {
 			this.fontBitmap = new fontImage() as Bitmap;
 			this.fontBitmapData = fontBitmap.bitmapData;
@@ -116,6 +128,9 @@ package  {
 			paint();
 		}
 		
+		/**
+		 * Applies all updaets that have happened since the last call to paint().
+		 */
 		public function paint():void {
 			screen.lock();
 			
@@ -179,6 +194,14 @@ package  {
 			return (a << 24) | (r << 16) | (g << 8) | b;
 		}
 		
+		/**
+		 * Write some text at the specified location.
+		 * @param	string	The text to write.
+		 * @param	x		
+		 * @param	y
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 */
 		public function write(string:String, x:int, y:int, fgcolor:* = null, bgcolor:* = null):void {
 			if (string == null)
 				throw Error("string must not be null");
@@ -196,11 +219,24 @@ package  {
 			}
 		}
 		
+		/**
+		 * Write some text in the center of a specified row.
+		 * @param	string	The text to write.
+		 * @param	y
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 */
 		public function writeCenter(string:String, y:int, fgcolor:* = null, bgcolor:* = null):void{
 			var x:int = (widthInCharacters - string.length) / 2;
 			write(string, x, y, fgcolor, bgcolor);
 		}
 		
+		/**
+		 * Clear the panel.
+		 * @param	char
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 */
 		public function clear(char:String = " ", fgcolor:* = null, bgcolor:* = null):void{
 			if (fgcolor == null)
 				fgcolor = nullForegroundColor;

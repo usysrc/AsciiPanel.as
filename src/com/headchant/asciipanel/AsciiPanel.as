@@ -66,8 +66,6 @@ package com.headchant.asciipanel {
 			
 			var imageWidthInCharacters:int = fontBitmapData.width / charWidth;
 			
-			trace(imageWidthInCharacters);
-			
 			this.glyphs = new Array();
 			for (var i : int = 0; i < 256; i++) {
 				var sx:int = (i % imageWidthInCharacters) * charWidth;

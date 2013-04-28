@@ -66,8 +66,6 @@ package com.headchant.asciipanel {
 			
 			var imageWidthInCharacters:int = fontBitmapData.width / charWidth;
 			
-			trace(imageWidthInCharacters);
-			
 			this.glyphs = new Array();
 			for (var i : int = 0; i < 256; i++) {
 				var sx:int = (i % imageWidthInCharacters) * charWidth;
@@ -191,7 +189,7 @@ package com.headchant.asciipanel {
 		
 		public function writeCenter(string:String, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
 			var x:int = (widthInCharacters - string.length) / 2;
-			write(string, x, y);
+			write(string, x, y, fgcolor, bgcolor);
 		}
 		
 		public function clear(char:String = " ", fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{

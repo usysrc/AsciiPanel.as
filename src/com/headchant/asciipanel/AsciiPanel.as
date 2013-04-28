@@ -29,8 +29,8 @@ package  {
 		private var screenBitmap : Bitmap;
 		private var foregroundColor : Array;
 		private var backgroundColor : Array;
-		private var defaultForegroundColor : uint = AsciiPanel.DARKWHITE;
-		private var defaultBackgroundColor : uint = AsciiPanel.BLACK;
+		private var originalForegroundColor : uint = AsciiPanel.DARKWHITE;
+		private var originalBackgroundColor : uint = AsciiPanel.BLACK;
 		
 		public static var WHITE : uint = rgbaColor(255,255,255);
 		public static var BLACK : uint = rgbaColor(0,0,0);
@@ -50,12 +50,12 @@ package  {
 		/**
 		 * The default color to use when the foreground color is not specified.
 		 */
-		public var nullForegroundColor : uint = DARKWHITE;
+		public var defaultForegroundColor : uint = DARKWHITE;
 		
 		/**
 		 * The default color to use when the background color is not specified.
 		 */
-		public var nullBackgroundColor : uint = BLACK;
+		public var defaultBackgroundColor : uint = BLACK;
 		
 		public function getWidthInCharacters() : int { return widthInCharacters; }
 		public function getHeightInCharacters() : int { return heightInCharacters; }
@@ -110,10 +110,10 @@ package  {
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					chars[i][j] = 0;
 					oldchars[i][j] = -1;
-					foregroundColor[i][j] = defaultForegroundColor;
-					backgroundColor[i][j] = defaultBackgroundColor;
-					oldforegroundColor[i][j] = defaultForegroundColor;
-					oldbackgroundColor[i][j] = defaultBackgroundColor;
+					foregroundColor[i][j] = originalForegroundColor;
+					backgroundColor[i][j] = originalBackgroundColor;
+					oldforegroundColor[i][j] = originalForegroundColor;
+					oldbackgroundColor[i][j] = originalBackgroundColor;
 				}
 			}
 			
@@ -148,7 +148,7 @@ package  {
 					var bitmapdata:BitmapData = (glyphs[chars[i][j]] as BitmapData);
 					var destPoint:Point = new Point(i * charWidth, j * charHeight);
 					
-					if(foregroundColor[i][j] != defaultForegroundColor || backgroundColor[i][j] != defaultBackgroundColor)
+					if(foregroundColor[i][j] != originalForegroundColor || backgroundColor[i][j] != originalBackgroundColor)
 					{
 						var tile:Vector.<uint> = bitmapdata.getVector(sourceRect); 
 						var tileLength:uint = tile.length;
@@ -157,14 +157,14 @@ package  {
 					
 						for(var pixel:uint = 0; pixel < tileLength; pixel++)
 						{
-							if(tile[pixel] == defaultBackgroundColor)
+							if(tile[pixel] == originalBackgroundColor)
 							{
-								if(backgroundColor[i][j] != defaultBackgroundColor)
+								if(backgroundColor[i][j] != originalBackgroundColor)
 								{
 									tile[pixel] = backgroundColor[i][j];
 								}
 							}
-							else if(foregroundColor[i][j] != defaultForegroundColor)
+							else if(foregroundColor[i][j] != originalForegroundColor)
 							{
 								tile[pixel] = foregroundColor[i][j];
 							}
@@ -199,18 +199,18 @@ package  {
 		 * @param	string	The text to write.
 		 * @param	x		
 		 * @param	y
-		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
-		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use defaultForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use defaultBackgroundColor if left null.
 		 */
 		public function write(string:String, x:int, y:int, fgcolor:* = null, bgcolor:* = null):void {
 			if (string == null)
 				throw Error("string must not be null");
 			
 			if (fgcolor == null)
-				fgcolor = nullForegroundColor;
+				fgcolor = defaultForegroundColor;
 			
 			if (bgcolor == null)
-				bgcolor = nullBackgroundColor;
+				bgcolor = defaultBackgroundColor;
 				
 			for (var i : int = 0; i < string.length; i++) {
 				foregroundColor[x+i][y] = fgcolor;
@@ -223,8 +223,8 @@ package  {
 		 * Write some text in the center of a specified row.
 		 * @param	string	The text to write.
 		 * @param	y
-		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
-		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use defaultForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use defaultBackgroundColor if left null.
 		 */
 		public function writeCenter(string:String, y:int, fgcolor:* = null, bgcolor:* = null):void{
 			var x:int = (widthInCharacters - string.length) / 2;
@@ -234,15 +234,15 @@ package  {
 		/**
 		 * Clear the panel.
 		 * @param	char
-		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use nullForegroundColor if left null.
-		 * @param	bgcolor	The background color. Must be a uint or null. Will use nullBackgroundColor if left null.
+		 * @param	fgcolor	The foreground color. Must be a uint or null. Will use defaultForegroundColor if left null.
+		 * @param	bgcolor	The background color. Must be a uint or null. Will use defaultBackgroundColor if left null.
 		 */
 		public function clear(char:String = " ", fgcolor:* = null, bgcolor:* = null):void{
 			if (fgcolor == null)
-				fgcolor = nullForegroundColor;
+				fgcolor = defaultForegroundColor;
 				
 			if (bgcolor == null)
-				bgcolor = nullBackgroundColor;
+				bgcolor = defaultBackgroundColor;
 				
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {

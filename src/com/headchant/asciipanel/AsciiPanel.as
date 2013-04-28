@@ -134,7 +134,7 @@ package  {
 		}
 		
 		/**
-		 * Applies all updaets that have happened since the last call to paint().
+		 * Applies all updates that have happened since the last call to paint().
 		 */
 		public function paint():void {
 			screen.lock();
@@ -224,10 +224,10 @@ package  {
 				bgcolor = defaultBackgroundColor;
 				
 			for (var i : int = 0; i < string.length; i++) {
-				x++;
 				foregroundColor[x][y] = fgcolor;
 				backgroundColor[x][y] = bgcolor;	
 				chars[x][y] = string.charCodeAt(i);
+				x++;
 				currentPosition.x = x;
 				currentPosition.y = y;
 			}

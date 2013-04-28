@@ -1,4 +1,4 @@
-package com.headchant.asciipanel {
+package  {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -47,6 +47,9 @@ package com.headchant.asciipanel {
 		private var oldchars : Array;
 		private var oldbackgroundColor : Array;
 		private var oldforegroundColor : Array;
+		
+		public var nullForegroundColor : uint = DARKWHITE;
+		public var nullBackgroundColor : uint = BLACK;
 		
 		public function getWidthInCharacters() : int { return widthInCharacters; }
 		public function getHeightInCharacters() : int { return heightInCharacters; }
@@ -176,9 +179,15 @@ package com.headchant.asciipanel {
 			return (a << 24) | (r << 16) | (g << 8) | b;
 		}
 		
-		public function write(string:String, x:int, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void {
+		public function write(string:String, x:int, y:int, fgcolor:* = null, bgcolor:* = null):void {
 			if (string == null)
 				throw Error("string must not be null");
+			
+			if (fgcolor == null)
+				fgcolor = nullForegroundColor;
+			
+			if (bgcolor == null)
+				bgcolor = nullBackgroundColor;
 				
 			for (var i : int = 0; i < string.length; i++) {
 				foregroundColor[x+i][y] = fgcolor;
@@ -187,20 +196,25 @@ package com.headchant.asciipanel {
 			}
 		}
 		
-		public function writeCenter(string:String, y:int, fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
+		public function writeCenter(string:String, y:int, fgcolor:* = null, bgcolor:* = null):void{
 			var x:int = (widthInCharacters - string.length) / 2;
 			write(string, x, y, fgcolor, bgcolor);
 		}
 		
-		public function clear(char:String = " ", fgcolor:uint = 0xFFC0C0C0, bgcolor:uint = 0xFF000000):void{
+		public function clear(char:String = " ", fgcolor:* = null, bgcolor:* = null):void{
+			if (fgcolor == null)
+				fgcolor = nullForegroundColor;
+				
+			if (bgcolor == null)
+				bgcolor = nullBackgroundColor;
+				
 			for (var i:int = 0; i < widthInCharacters; i++) {
 				for (var j : int = 0; j < heightInCharacters; j++) {
 					chars[i][j] = char.charCodeAt(0);
 					foregroundColor[i][j] = fgcolor;
-					backgroundColor[i][j] = bgcolor;	
+					backgroundColor[i][j] = bgcolor;
 				}
 			}
 		}
-		
 	}
 }
